@@ -1,0 +1,17 @@
+CREATE TABLE pokemons (
+  id_pokemon BIGSERIAL PRIMARY KEY,
+  nome VARCHAR(50) NOT NULL UNIQUE,
+  tipo_primario VARCHAR(30) NOT NULL,
+  tipo_secundario VARCHAR(30),
+  nivel INT NOT NULL CHECK (nivel BETWEEN 1 AND 100),
+  hp_maximo INT NOT NULL CHECK (hp_maximo > 0),
+  FK_Treinador INT NOT NULL,
+  FOREIGN KEY (FK_Treinador) REFERENCES treinador(id_treinador)
+);
+
+
+CREATE TABLE Treinador(
+ID_Treinador BIGSERIAL PRIMARY KEY NOT NULL,
+Nome VARCHAR(255) NOT NULL,
+Cidade VARCHAR(255) NOT NULL
+);
