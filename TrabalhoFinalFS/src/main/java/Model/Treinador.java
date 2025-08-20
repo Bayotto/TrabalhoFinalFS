@@ -1,0 +1,37 @@
+package Model;
+
+public class Treinador {
+private int id_treinador;
+private String nome;
+private String regiao;
+
+    public Treinador(int id_treinador, String nome, String regiao) {
+        this.id_treinador = id_treinador;
+        this.nome = nome;
+        this.regiao = regiao;
+    }
+
+    public int getId_treinador() {
+        return id_treinador;
+    }
+
+    public void setId_treinador(int id_treinador) {
+        this.id_treinador = id_treinador;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getRegiao() {
+        return regiao;
+    }
+
+    public void setRegiao(String regiao) {
+        this.regiao = regiao;
+    }
+}
