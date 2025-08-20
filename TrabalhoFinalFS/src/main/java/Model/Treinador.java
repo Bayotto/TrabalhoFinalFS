@@ -3,12 +3,12 @@ package Model;
 public class Treinador {
 private int id_treinador;
 private String nome;
-private String regiao;
+private String cidade;
 
-    public Treinador(int id_treinador, String nome, String regiao) {
+    public Treinador(int id_treinador, String nome, String cidade) {
         this.id_treinador = id_treinador;
         this.nome = nome;
-        this.regiao = regiao;
+        this.cidade = cidade;
     }
 
     public int getId_treinador() {
@@ -27,11 +27,12 @@ private String regiao;
         this.nome = nome;
     }
 
-    public String getRegiao() {
-        return regiao;
+    public String getcidade() {
+        return cidade;
     }
 
-    public void setRegiao(String regiao) {
-        this.regiao = regiao;
+    public void setcidade(String cidade) {
+        this.cidade = cidade;
     }
 }
+
