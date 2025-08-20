@@ -1,104 +1,136 @@
 package Controller;
 
 
-import Model.Treinador;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-import util.HibernateUtil;
+import Model.DAO.TreinadorDAO;
+import Model.DAO.PokemonDAO;
 
+import Model.Pokemon;
+import Model.Treinador;
+
+import java.sql.SQLException;
 import java.util.List;
 
 public class TreinadorController {
-    public void cadastrartreinador(Treinador treinador) throws Exception {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            //Validações de négocio(nome,cidade)
 
+    private TreinadorDAO treinadorDAO;
 
-            if (treinador.getNome() == null || treinador.getNome().trim().isEmpty()) {
-                throw new Exception("Nome do Treinador é obrigatório.");
+    public void cadastrarTreinador(String nome, String cidade) throws Exception {
+        // --- EXERCÍCIO: Adicionar validações aqui! ---
+        // Exemplo de chamada do Model (já validado):
+
+        Treinador treinador = new Treinador(nome, cidade);
+        try {
+
+            // Validações
+            if (nome == null || nome.trim().isEmpty()) {
+                throw new Exception("O nome do Pokémon é obrigatório.");
             }
-            if (treinador.getcidade() == null || treinador.getcidade().trim().isEmpty()) {
-                throw new Exception("Nome da Cidade é obrigatório");
+
+            if (cidade == null || cidade.trim().isEmpty()) {
+                throw new Exception("A Regiao do Treinador é obrigatório.");
             }
 
-            session.persist(treinador);//Salva o objeto no banco
-            transaction.commit();
 
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
+            // Validação de unicidade
+            List<Treinador> existentes = treinadorDAO.buscarPorNome(nome);
+            if (!existentes.isEmpty()) {
+                throw new Exception("Já existe um Treinador com o nome '" + nome + "'.");
             }
-            throw new RuntimeException("Erro ao cadastrar treinador", e);
+
+            // Cadastro
+            Treinador treinador1 = new Treinador(nome, cidade);
+
+            treinadorDAO.Cadastrar(treinador1);
+        } catch (SQLException e) {
+            throw new Exception("Erro ao cadastrar treinador no banco de dados: " + e.getMessage());
         }
     }
 
-    public void atualizartreinador(Treinador treinador) throws Exception {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.merge(treinador);
-            transaction.commit();
+    public void atualizarPokemon(int id, String nome, String cidade) throws Exception {
 
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
+        // --- EXERCÍCIO: Adicionar validações aqui! ---
+        // Exemplo de chamada do Model (já validado):
+
+        Treinador treinador = new Treinador(id, nome, cidade);
+
+        // Validação de existência
+        Treinador existente = treinadorDAO.buscarPorId(id);
+        if (existente == null) {
+            throw new Exception("Treinador com ID " + id + " não encontrado para atualização.");
+        }
+
+        // Validações
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new Exception("O nome do Pokémon é obrigatório.");
+        }
+
+        if (cidade == null || cidade.trim().isEmpty()) {
+            throw new Exception("O cidade do Treinador é obrigatório.");
+        }
+
+
+        // Validação de unicidade (se o nome for alterado para outro já existente)
+        List<Treinador> treinadorComMesmoNome = treinadorDAO.buscarPorNome(nome);
+        for (Treinador t : treinadorComMesmoNome) {
+            if (t.getId_treinador() != id) {
+                throw new Exception("Já existe um Treinador com o nome '" + nome + "'.");
             }
-            throw new RuntimeException("Erro ao atualizar treinador", e);
+        }
+
+        // Atualização
+        Treinador treinadorAtualizado = new Treinador(id, nome, cidade);
+        try {
+            treinadorDAO.atualizar(treinadorAtualizado);
+        } catch (SQLException e) {
+            throw new Exception("Erro ao atualizar treinador no banco de dados: " + e.getMessage());
         }
     }
 
-    public List<Treinador> listarTodostreinadors() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            //HQL (Hibernate Query Language) - similar ao SQL, mas usa o nome da CLASSE
-            Query<Treinador> query = session.createQuery("FROM treinador", Treinador.class);
-            return query.getResultList();
-
-        }
-    }
-
-    //
-    public Treinador buscartreinadorPorId(int id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Treinador.class, id);
-
-        }
-    }
-
-
-    public void removertreinador(int id) throws Exception {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            Treinador treinador = session.get(Treinador.class, id);
-            if (treinador != null) {
-                session.remove(treinador); // Remove o objeto
+    public void inserirListaTreinadores(List<Treinador> listaTreinador) throws Exception {
+        for (Treinador t : listaTreinador) {
+            if (t.getNome() == null || t.getNome().trim().isEmpty()) {
+                throw new Exception("Nome do Pokémon é obrigatório.");
             }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-
+            if (t.getCidade() == null || t.getCidade().trim().isEmpty()) {
+                throw new Exception("cidade é obrigatório.");
             }
-            throw new RuntimeException("Erro ao remover treinador", e);
+
+        }
+
+        try {
+            treinadorDAO.cadastrarListaDeTreinador(listaTreinador);
+        } catch (SQLException e) {
+            throw new Exception("Erro ao inserir lista: " + e.getMessage());
         }
     }
 
-    public long contarTreinadorsPorTipo(String tipo) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Long> query = session.createQuery("SELECT COUNT(*) FROM treinador WHERE tipo1 = :tipo", Long.class);
-            query.setParameter("tipo", tipo);
-            return query.getSingleResult();
+    public List<Treinador> listarTodosTreinadores() {
+        return treinadorDAO.listarTodos();
+    }
 
+    public Treinador buscarTreinadorPorId(int id) {
+        return treinadorDAO.buscarPorId(id);
+    }
+
+    public void removerPokemon(int id) throws Exception {
+        // --- EXERCÍCIO: Adicionar validações aqui! ---
+        // Validação de existência
+
+        Treinador existente = treinadorDAO.buscarPorId(id);
+        if (existente == null) {
+            throw new Exception("Treinador com ID " + id + " não encontrado para remoção.");
+        }
+
+        try {
+            treinadorDAO.remover(id);
+        } catch (SQLException e) {
+            throw new Exception("Erro ao remover Treinador: " + e.getMessage());
         }
     }
 
-
-    public Treinador buscarTreinadorPorNome(String nome) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Treinador.class, nome);
-        }
+    public List<Treinador> buscarTreinadorPorNome(String nome) {
+        // --- EXERCÍCIO: Adicionar validações aqui! ---
+        return treinadorDAO.buscarPorNome(nome);
     }
 }
+
