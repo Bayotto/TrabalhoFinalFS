@@ -1,8 +1,6 @@
-package View;
+package View.Treinador;
 
-import Controller.PokemonController;
 import Controller.TreinadorController;
-import Model.Pokemon;
 import Model.Treinador;
 
 import javax.swing.*;
@@ -12,12 +10,12 @@ public class TreinadorForm extends JInternalFrame {
     private TreinadorController controller;
     private JTextField txtId, txtNome, txtCidade;
     private JButton btnSalvar, btnBuscar;
-    private Integer pokemonIdParaEdicao;
+    private Integer treinadorIdParaEdicao;
 
     public TreinadorForm(TreinadorController controller, Integer treinadorId) {
-        super("Cadastro de Pokémon", true, true, true, true);
+        super("Cadastro de Treinador", true, true, true, true);
         this.controller = controller;
-        this.pokemonIdParaEdicao = treinadorId;
+        this.treinadorIdParaEdicao = treinadorId;
 
         setSize(600, 400);
         setLayout(new GridBagLayout());
@@ -68,62 +66,62 @@ public class TreinadorForm extends JInternalFrame {
         gbc.gridy = row;
         gbc.gridwidth = 3;
         btnSalvar = new JButton("Salvar");
-        btnSalvar.addActionListener(e -> salvarPokemon());
+        btnSalvar.addActionListener(e -> salvarTreinador());
         add(btnSalvar, gbc);
 
-        if (pokemonIdParaEdicao != null) {
-            carregarPokemonParaEdicao(pokemonIdParaEdicao);
-            txtId.setText(String.valueOf(pokemonIdParaEdicao));
+        if (treinadorIdParaEdicao != null) {
+            carregarTreinadorParaEdicao(treinadorIdParaEdicao);
+            txtId.setText(String.valueOf(treinadorIdParaEdicao));
             btnBuscar.setEnabled(false);
         }
     }
 
-    private void buscarPokemon() {
-        String idStr = JOptionPane.showInputDialog(this, "Digite o ID do Pokémon para buscar:");
+    private void buscarTreiandor() {
+        String idStr = JOptionPane.showInputDialog(this, "Digite o ID do TReinador para buscar:");
         if (idStr != null && !idStr.trim().isEmpty()) {
             try {
                 int id = Integer.parseInt(idStr);
-                carregarPokemonParaEdicao(id);
+                carregarTreinadorParaEdicao(id);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "ID inválido. Por favor, digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private void carregarPokemonParaEdicao(int id) {
+    private void carregarTreinadorParaEdicao(int id) {
         try {
-            Treinador treinador = controller.buscartreinadorPorId(id);
+            Treinador treinador = controller.buscarTreinadorPorId(id);
             if (treinador != null) {
                 txtId.setText(String.valueOf(treinador.getId_treinador()));
                 txtNome.setText(treinador.getNome());
 
-                pokemonIdParaEdicao = treinador.getId_treinador();
+                treinadorIdParaEdicao = treinador.getId_treinador();
             } else {
-                JOptionPane.showMessageDialog(this, "Pokémon com ID " + id + " não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Treinador com ID " + id + " não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
                 limparCampos();
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao buscar Pokémon: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Erro ao buscar Treinador: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void salvarPokemon() {
+    private void salvarTreinador() {
         try {
             String nome = txtNome.getText().trim();
             String cidade = txtCidade.getText().trim();
 
 
-            if (pokemonIdParaEdicao == null) {
-                controller.cadastrartreinador(new Treinador(nome, cidade));
-                JOptionPane.showMessageDialog(this, "Pokémon cadastrado com sucesso!");
+            if (treinadorIdParaEdicao == null) {
+                controller.cadastrarTreinador(nome, cidade);
+                JOptionPane.showMessageDialog(this, "treinador cadastrado com sucesso!");
             }
             this.dispose();
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Nível ou HP Máximo inválido. Por favor, insira valores numéricos válidos.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Nome ou cidade inválido. Por favor, insira valores numéricos válidos.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException e) { // Captura exceções do Model (validações de Nível/HP)
             JOptionPane.showMessageDialog(this, "Erro de validação (Model): " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) { // Captura exceções do Controller
-            JOptionPane.showMessageDialog(this, "Erro ao salvar Pokémon: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Erro ao salvar Treinador: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -131,7 +129,7 @@ public class TreinadorForm extends JInternalFrame {
         txtId.setText("");
         txtNome.setText("");
         txtCidade.setText("");
-        pokemonIdParaEdicao = null;
+        treinadorIdParaEdicao = null;
         btnBuscar.setEnabled(true);
     }
 }
