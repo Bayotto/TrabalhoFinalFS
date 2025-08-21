@@ -15,3 +15,11 @@ ID_Treinador BIGSERIAL PRIMARY KEY NOT NULL,
 Nome VARCHAR(255) NOT NULL,
 Cidade VARCHAR(255) NOT NULL
 );
+
+  public List<Pokemon> listarTodosPokemon() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // HQL (hibernate query languege - similar ao sql, mas usa o nome da classe
+            Query<Pokemon> query = session.createQuery("FROM Pokemon", Pokemon.class);
+            return query.getResultList();
+        }
+    }
