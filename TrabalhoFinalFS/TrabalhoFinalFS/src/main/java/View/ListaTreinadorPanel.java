@@ -1,7 +1,12 @@
-package View;
+package View.Treinador;
+
 
 import Controller.TreinadorController;
+
+
 import Model.Treinador;
+
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,28 +14,29 @@ import java.awt.*;
 import java.util.List;
 
 public class ListaTreinadorPanel extends JInternalFrame {
+
     private TreinadorController controller;
-    private JTable tabelaTreinador;
+    private JTable tabelaTreinadores;
     private DefaultTableModel tableModel;
     private JButton btnAtualizar, btnRemover, btnBuscar, btnEditar;
     private JTextField txtBuscaNome;
 
     public ListaTreinadorPanel(TreinadorController controller) {
-        super("Lista de Pokémons", true, true, true, true);
+        super("Lista de Treinadores", true, true, true, true);
         this.controller = controller;
 
         setSize(900, 500);
         setLayout(new BorderLayout());
 
-        String[] colunas = {"ID", "Nome", "Tipo Primário", "Tipo Secundário", "Nível", "HP Máximo"};
+        String[] colunas = {"ID", "Nome", "Cidade"};
         tableModel = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        tabelaTreinador = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(tabelaTreinador);
+        tabelaTreinadores = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tabelaTreinadores);
         add(scrollPane, BorderLayout.CENTER);
 
         JPanel panelAcoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -48,86 +54,88 @@ public class ListaTreinadorPanel extends JInternalFrame {
         panelAcoes.add(btnEditar);
         add(panelAcoes, BorderLayout.NORTH);
 
-        btnAtualizar.addActionListener(e -> carregarTreinadorsNaTabela());
+        btnAtualizar.addActionListener(e -> carregarTreinadoresNaTabela());
         btnRemover.addActionListener(e -> removerTreinadorSelecionado());
-        btnBuscar.addActionListener(e -> buscarTreinadorsPorNome());
+        btnBuscar.addActionListener(e -> buscarTreinadoresPorNome());
         btnEditar.addActionListener(e -> editarTreinadorSelecionado());
 
-
+        carregarTreinadoresNaTabela();
     }
 
-
-    private void carregarTreinadorsNaTabela() {
+    private void carregarTreinadoresNaTabela() {
         tableModel.setRowCount(0);
-        List<Treinador> Treinadors = controller.listarTodostreinadors();
-        for (Treinador Treinador : Treinadors) {
+        java.util.List<Treinador> treinadores = controller.listarTodosTreinadores();
+        for (Treinador treinador : treinadores) {
             tableModel.addRow(new Object[]{
-                    Treinador.getId_treinador(),
-                    Treinador.getNome(),
-                    Treinador.getcidade()
+                    treinador.getId_treinador(),
+                    treinador.getNome(),
+                    treinador.getCidade()
             });
         }
     }
 
     private void removerTreinadorSelecionado() {
-        int selectedRow = tabelaTreinador.getSelectedRow();
+        int selectedRow = tabelaTreinadores.getSelectedRow();
         if (selectedRow >= 0) {
             int idTreinador = (int) tableModel.getValueAt(selectedRow, 0);
 
             int confirm = JOptionPane.showConfirmDialog(this,
-                    "Tem certeza que deseja remover o Pokémon ID: " + idTreinador + "?",
+                    "Tem certeza que deseja remover o Treinador ID: " + idTreinador + "?",
                     "Confirmar Remoção", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
-                    controller.removertreinador(idTreinador);
-                    JOptionPane.showMessageDialog(this, "Pokémon removido com sucesso!");
-                    carregarTreinadorsNaTabela();
+                    controller.removerTreinador(idTreinador);
+                    JOptionPane.showMessageDialog(this, "Treinador removido com sucesso!");
+                    carregarTreinadoresNaTabela();
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Erro ao remover Pokémon: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Erro ao remover Treinador: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Selecione um Pokémon para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Selecione um Treinador para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    private void buscarTreinadorsPorNome() {
+    private void buscarTreinadoresPorNome() {
         String nomeBusca = txtBuscaNome.getText().trim();
         tableModel.setRowCount(0);
 
-        Treinador Treinadors = controller.buscarTreinadorPorNome(nomeBusca);
+        List<Treinador> treinadores = controller.buscarTreinadorPorNome(nomeBusca);
 
-        if (Treinadors.getNome().isEmpty() && !nomeBusca.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhum Pokémon encontrado com o nome: '" + nomeBusca + "'", "Busca", JOptionPane.INFORMATION_MESSAGE);
+        if (treinadores.isEmpty() && !nomeBusca.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum Treinador encontrado com o nome: '" + nomeBusca + "'", "Busca", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        tableModel.addRow(new Object[]{
-                Treinadors.getId_treinador(),
-                Treinadors.getNome(),
+        for (Treinador treinador : treinadores) {
+            tableModel.addRow(new Object[]{
+                    treinador.getId_treinador(),
+                    treinador.getNome(),
+                    treinador.getCidade()
 
-        });
+            });
+        }
     }
 
-
     private void editarTreinadorSelecionado() {
-        int selectedRow = tabelaTreinador.getSelectedRow();
+        int selectedRow = tabelaTreinadores.getSelectedRow();
         if (selectedRow >= 0) {
             int idTreinador = (int) tableModel.getValueAt(selectedRow, 0);
 
-            TreinadorForm TreinadorForm = new TreinadorForm(controller, idTreinador);
-            this.getDesktopPane().add(TreinadorForm);
-            TreinadorForm.setVisible(true);
-            TreinadorForm.toFront();
+            TreinadorForm treinadorForm = new TreinadorForm(controller, idTreinador);
+            this.getDesktopPane().add(treinadorForm);
+            treinadorForm.setVisible(true);
+            treinadorForm.toFront();
 
-            TreinadorForm.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+            treinadorForm.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
                 @Override
                 public void internalFrameClosed(javax.swing.event.InternalFrameEvent e) {
-                    carregarTreinadorsNaTabela();
+                    carregarTreinadoresNaTabela();
                 }
             });
 
         } else {
-            JOptionPane.showMessageDialog(this, "Selecione um Pokémon para editar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Selecione um Treinador para editar.", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
     }
+
 }
