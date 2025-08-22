@@ -50,10 +50,10 @@ public class TreinadorController {
         }
     }
 
-    public List<Treinador> listarTodostreinadors() {
+    public List<Treinador> listarTodostreinadores() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             //HQL (Hibernate Query Language) - similar ao SQL, mas usa o nome da CLASSE
-            Query<Treinador> query = session.createQuery("FROM treinador", Treinador.class);
+            Query<Treinador> query = session.createQuery("FROM Treinador", Treinador.class);
             return query.getResultList();
 
         }
@@ -86,19 +86,12 @@ public class TreinadorController {
         }
     }
 
-    public long contarTreinadorPorTipo(String tipo) {
+
+    public List<Treinador> buscarTreinadorPorNome(String nome) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Long> query = session.createQuery("SELECT COUNT(*) FROM treinador WHERE tipo1 = :tipo", Long.class);
-            query.setParameter("tipo", tipo);
-            return query.getSingleResult();
-
-        }
-    }
-
-
-    public Treinador buscarTreinadorPorNome(String nome) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Treinador.class, nome);
+            Query<Treinador> treinador = session.createQuery("FROM Treinador WHERE nome = :nome", Treinador.class);
+            treinador.setParameter("nome",nome);
+            return treinador.getResultList();
         }
     }
 }

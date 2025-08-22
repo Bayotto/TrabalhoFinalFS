@@ -1,6 +1,7 @@
 package util;
 
 import Model.Pokemon;
+import Model.Treinador;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -18,6 +19,7 @@ public class HibernateUtil {
             // Cria a SessionFactory a partir do serviço de registro
             sessionFactory = new MetadataSources(standardRegistry)
                     .addAnnotatedClass(Pokemon.class)
+                    .addAnnotatedClass(Treinador.class)
                     .buildMetadata()
                     .buildSessionFactory();
         } catch (Exception e) {

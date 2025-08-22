@@ -98,22 +98,22 @@ public class ListaPokemonsPanel extends JInternalFrame {
         String nomeBusca = txtBuscaNome.getText().trim();
         tableModel.setRowCount(0);
 
-        Pokemon pokemons = controller.buscarPokemonPorNome(nomeBusca);
+        List<Pokemon> pokemons = controller.buscarPokemonPorNome(nomeBusca);
 
-        if (pokemons.getNome().isEmpty() && !nomeBusca.isEmpty()) {
+        if (pokemons.isEmpty() && !nomeBusca.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nenhum Pokémon encontrado com o nome: '" + nomeBusca + "'", "Busca", JOptionPane.INFORMATION_MESSAGE);
         }
-
-        tableModel.addRow(new Object[]{
-                pokemons.getId(),
-                pokemons.getNome(),
-                pokemons.getTipoPrimario(),
-                pokemons.getTipoSecundario() != null ? pokemons.getTipoSecundario() : "",
-                pokemons.getNivel(),
-                pokemons.getHpMaximo()
-        });
+        for (Pokemon pokemon : pokemons) {
+            tableModel.addRow(new Object[]{
+                    pokemon.getId(),
+                    pokemon.getNome(),
+                    pokemon.getTipoPrimario(),
+                    pokemon.getTipoSecundario() != null ? pokemon.getTipoSecundario() : "",
+                    pokemon.getNivel(),
+                    pokemon.getHpMaximo()
+            });
+        }
     }
-
 
     private void editarPokemonSelecionado() {
         int selectedRow = tabelaPokemons.getSelectedRow();

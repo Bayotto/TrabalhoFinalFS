@@ -118,6 +118,7 @@ public class PokemonForm extends JInternalFrame {
                 txtTipoSecundario.setText(pokemon.getTipoSecundario());
                 txtNivel.setText(String.valueOf(pokemon.getNivel()));
                 txtHpMaximo.setText(String.valueOf(pokemon.getHpMaximo()));
+                txtFK_Treinador.setText(String.valueOf(pokemon.getFK_Treinador()));
                 pokemonIdParaEdicao = pokemon.getId();
             } else {
                 JOptionPane.showMessageDialog(this, "Pokémon com ID " + id + " não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -135,6 +136,7 @@ public class PokemonForm extends JInternalFrame {
             String tipoSecundario = txtTipoSecundario.getText().trim();
             int nivel = Integer.parseInt(txtNivel.getText().trim());
             int hpMaximo = Integer.parseInt(txtHpMaximo.getText().trim());
+            int FK_treinador = Integer.parseInt(txtFK_Treinador.getText().trim());
 
             // Garante que tipoSecundario seja null se estiver vazio
             if (tipoSecundario.isEmpty()) {
@@ -142,7 +144,7 @@ public class PokemonForm extends JInternalFrame {
             }
 
             if (pokemonIdParaEdicao == null) {
-                controller.cadastrarPokemon(new Pokemon(nome, tipoPrimario, tipoSecundario, nivel, hpMaximo));
+                controller.cadastrarPokemon(new Pokemon(nome, tipoPrimario, tipoSecundario, nivel, hpMaximo,FK_treinador));
                 JOptionPane.showMessageDialog(this, "Pokémon cadastrado com sucesso!");
             }
             this.dispose();

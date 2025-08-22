@@ -29,24 +29,27 @@ public class Pokemon {
 
     public Pokemon(){};
 
+    public Pokemon(String nome, String tipoPrimario, String tipoSecundario, int nivel, int hpMaximo, int FK_Treinador) {
+        this.nome = nome;
+        this.tipoPrimario = tipoPrimario;
+        this.tipoSecundario = tipoSecundario;
+        this.nivel = nivel;
+        this.hpMaximo = hpMaximo;
+        this.FK_Treinador = FK_Treinador;
+    }
 
     public Pokemon(int id, String nome, String tipoPrimario, String tipoSecundario, int nivel, int hpMaximo, int FK_Treinador) {
         this.id_pokemon = id;
         this.nome = nome;
         this.tipoPrimario = tipoPrimario;
         this.tipoSecundario = tipoSecundario;
+        this.nivel = nivel;
+        this.hpMaximo = hpMaximo;
         this.FK_Treinador = FK_Treinador;
-        // As validações são chamadas aqui pelos setters
-        setNivel(nivel);
-        setHpMaximo(hpMaximo);
     }
 
-    public Pokemon(String nome, String tipoPrimario, String tipoSecundario, int nivel, int hpMaximo,int FK_Treinador) {
-        this(-1, nome, tipoPrimario, tipoSecundario, nivel, hpMaximo, FK_Treinador);
-    }
 
-    public Pokemon(String nome, String tipoPrimario, String tipoSecundario, int nivel, int hpMaximo) {
-    }
+
 
     // Getters
     public int getId() { return id_pokemon; }
@@ -92,6 +95,7 @@ public class Pokemon {
                 ", tipoSecundario='" + tipoSecundario + '\'' +
                 ", nivel=" + nivel +
                 ", hpMaximo=" + hpMaximo +
+                ",FK_treinador" + FK_Treinador +
                 '}';
     }
 }

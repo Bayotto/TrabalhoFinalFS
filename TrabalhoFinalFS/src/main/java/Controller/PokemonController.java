@@ -12,8 +12,11 @@ import java.util.List;
 public class PokemonController {
     public void cadastrarPokemon(Pokemon pokemon) throws Exception {
         Transaction transaction = null;
+
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
             transaction = session.beginTransaction();
+
             //Validações de négocio(nome,tipo,etc.)
             if (pokemon.getNome() == null || pokemon.getNome().trim().isEmpty()) {
             }
@@ -96,20 +99,15 @@ public class PokemonController {
         }
     }
 
-    public long contarPokemonsPorTipo(String tipo){
-        try(Session session = HibernateUtil.getSessionFactory().openSession()){
-            Query<Long> query = session.createQuery("SELECT COUNT(*) FROM Pokemon WHERE tipo1 = :tipo", Long.class );
-            query.setParameter("tipo",tipo);
-            return query.getSingleResult();
-
-        }
-    }
 
 
 
-    public Pokemon buscarPokemonPorNome(String nome) {
+
+    public List<Pokemon> buscarPokemonPorNome(String nome) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Pokemon.class, nome);
+            Query<Pokemon> pokemon = session.createQuery("FROM Pokemon WHERE nome = :nome", Pokemon.class);
+            pokemon.setParameter("nome",nome);
+            return pokemon.getResultList();
         }
     }
 }

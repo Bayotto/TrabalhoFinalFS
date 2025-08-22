@@ -16,13 +16,13 @@ public class ListaTreinadorPanel extends JInternalFrame {
     private JTextField txtBuscaNome;
 
     public ListaTreinadorPanel(TreinadorController controller) {
-        super("Lista de Treinadores", true, true, true, true);
+        super("Lista de Treinador", true, true, true, true);
         this.controller = controller;
 
         setSize(900, 500);
         setLayout(new BorderLayout());
 
-        String[] colunas = {"ID", "Nome", "Cidade"};
+        String[] colunas = {"ID", "Nome","Cidade"};
         tableModel = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -59,12 +59,12 @@ public class ListaTreinadorPanel extends JInternalFrame {
 
     private void carregarTreinadorNaTabela() {
         tableModel.setRowCount(0);
-        List<Treinador> Treinadors = controller.listarTodostreinadors();
-        for (Treinador Treinador : Treinadors) {
+        List<Treinador> treinadores = controller.listarTodostreinadores();
+        for (Treinador treinador : treinadores) {
             tableModel.addRow(new Object[]{
-                    Treinador.getId_treinador(),
-                    Treinador.getNome(),
-                    Treinador.getcidade()
+                    treinador.getId_treinador(),
+                    treinador.getNome(),
+                    treinador.getcidade()
             });
         }
     }
@@ -95,20 +95,22 @@ public class ListaTreinadorPanel extends JInternalFrame {
         String nomeBusca = txtBuscaNome.getText().trim();
         tableModel.setRowCount(0);
 
-        Treinador Treinadors = controller.buscarTreinadorPorNome(nomeBusca);
+        List<Treinador> treinadores = controller.buscarTreinadorPorNome(nomeBusca);
 
-        if (Treinadors.getNome().isEmpty() && !nomeBusca.isEmpty()) {
+        if (treinadores.isEmpty() && !nomeBusca.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nenhum Pokémon encontrado com o nome: '" + nomeBusca + "'", "Busca", JOptionPane.INFORMATION_MESSAGE);
         }
+        for (Treinador treinador : treinadores) {
+            tableModel.addRow(new Object[]{
+                    treinador.getId_treinador(),
+                    treinador.getNome(),
+                    treinador.getcidade(),
 
-        tableModel.addRow(new Object[]{
-                Treinadors.getId_treinador(),
-                Treinadors.getNome(),
 
-        });
+            });
+        }
+
     }
-
-
     private void editarTreinadorSelecionado() {
         int selectedRow = tabelaTreinador.getSelectedRow();
         if (selectedRow >= 0) {
